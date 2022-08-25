@@ -12,27 +12,41 @@ SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 
 reps = 0
+timer = None
 
 
 # ---------------------------- TIMER RESET ------------------------------- #
+
+def timer_reset():
+    window.after_cancel(timer)
+    timer_heading.config(text="Timer", fg=GREEN)
+    tick.config(text="")
+    canvas.itemconfig(timer_text, text="00:00")
+    global reps
+    reps = 0
+
 
 # ---------------------------- TIMER MECHANISM ------------------------------- #
 
 def start_timer():
     global reps
+    reps += 1
 
     work_sec = WORK_MIN * 60
     short_break_sec = SHORT_BREAK_MIN * 60
     long_break_sec = LONG_BREAK_MIN * 60
 
-    # If 1st/3rd/5th/7th
-    count_down(work_sec)
+    if reps == 8:
+        count_down(long_break_sec)
+        timer_heading.config(text="Long Break", fg=RED)
 
-    # If 2nd/4th/6th
-    count_down(short_break_sec)
+    elif reps % 2 == 0:
+        count_down(short_break_sec)
+        timer_heading.config(text="Short Break", fg=PINK)
 
-    # If 8th
-    count_down(long_break_sec)
+    else:
+        count_down(work_sec)
+        timer_heading.config(text="Work", fg=GREEN)
 
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
@@ -42,8 +56,20 @@ def count_down(count):
     count_sec = count % 60
 
     canvas.itemconfig(timer_text, text=f"{count_min:02d}:{count_sec:02d}")
+
     if count > 0:
-        window.after(1000, count_down, count - 1)
+        global timer
+        timer = window.after(1000, count_down, count - 1)
+
+    else:
+        start_timer()
+
+        marks = ""
+        work_sessions = math.floor(reps/2)
+
+        for _ in range(work_sessions):
+            marks += "✔\n"
+        tick.config(text=marks)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -70,11 +96,11 @@ button_start = Button(text="Start", command=start_timer, bg=YELLOW, highlightbac
 button_start.grid(column=0, row=2)
 
 # Reset button
-button_reset = Button(text="Reset", bg=YELLOW, highlightbackground=YELLOW)
+button_reset = Button(text="Reset", command=timer_reset, bg=YELLOW, highlightbackground=YELLOW)
 button_reset.grid(column=2, row=2)
 
 # Counter
-tick = Label(text="✔", fg=GREEN, bg=YELLOW, font=(FONT_NAME, 28, "normal"))
+tick = Label(fg=GREEN, bg=YELLOW, font=(FONT_NAME, 28, "normal"))
 tick.grid(column=1, row=3)
 
 window.mainloop()
