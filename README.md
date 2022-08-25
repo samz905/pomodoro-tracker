@@ -13,7 +13,7 @@ The Tkinter is standard python module for GUI creation with Tk GUI toolkit. Tkin
 ### 3. Why Tkinter?
 - There are lots of other packages are available for creating great GUI  like [Qt](https://www.qt.io/) and [GTK](https://www.gtk.org/).  Tkinter is the easiest way to write your GUI program in Python. Its lighter than other available modules. 
 
-#### Setup
+### Setup
 1. Prerequisite: [Python 2.x](https://www.python.org/downloads/) or [Python 3.x](https://www.python.org/downloads/)
 2. Install Tkinter:
 
